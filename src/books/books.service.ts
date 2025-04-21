@@ -8,18 +8,18 @@ import { nestedOrderBy } from 'src/app.decorator';
 
 @Injectable()
 export class BooksService {
-  constructor(private prisma: PrismaService) { }
+    constructor(private prisma: PrismaService) {}
 
-  create(data: Prisma.BookCreateInput) {
-    return this.prisma.book.create({
-      data,
-    });
-  }
+    create(data: Prisma.BookCreateInput) {
+        return this.prisma.book.create({
+            data,
+        });
+    }
 
-  async findAll(pagination: PaginationQueryDto): Promise<Paginate<Book[]>> {
-    const { search, page, limit, sortBy, order } = pagination;
+    async findAll(pagination: PaginationQueryDto): Promise<Paginate<Book[]>> {
+        const { search, page, limit, sortBy, order } = pagination;
 
-    /**
+        /**
          * Case-insensitive search
          * Search condition for:
          * - name
@@ -28,74 +28,73 @@ export class BooksService {
          * - identity_no
          * - licence_no
          */
-    const where: Prisma.BookWhereInput = search
-      ? {
-        OR: [
-          { title: { contains: search, mode: 'insensitive' } },
-          { author: { contains: search, mode: 'insensitive' } },
-          isNaN(Number(search)) // Ensure search is a number before applying to manufacturing_year
-            ? {}
-            : { publishedYear: { equals: Number(search) } },
-        ],
-      }
-      : {};
+        const where: Prisma.BookWhereInput = search
+            ? {
+                  OR: [
+                      { title: { contains: search, mode: 'insensitive' } },
+                      { author: { contains: search, mode: 'insensitive' } },
+                      isNaN(Number(search)) // Ensure search is a number before applying to manufacturing_year
+                          ? {}
+                          : { publishedYear: { equals: Number(search) } },
+                  ],
+              }
+            : {};
 
+        const skip = (page - 1) * limit;
+        const take = limit > 0 ? limit : undefined;
 
-    const skip = (page - 1) * limit;
-    const take = limit > 0 ? limit : undefined;
-
-    const [total, data] = await Promise.all([
-      this.prisma.book.count({ where }),
-      this.prisma.book.findMany({
-        where,
-        orderBy: nestedOrderBy(sortBy, order),
-        skip,
-        take,
-      }),
-    ]);
-    return {
-      data,
-      limit,
-      total,
-      page,
-      last_page:
-        limit > 0 ? (limit > 0 ? Math.ceil(total / limit) : 1) : 1,
-    };
-  }
-
-  async findOne(id: number): Promise<Book> {
-    const data = await this.findUnique(id);
-    if (!data) {
-      throw new NotFoundException(`Book with id ${id} not found`);
+        const [total, data] = await Promise.all([
+            this.prisma.book.count({ where }),
+            this.prisma.book.findMany({
+                where,
+                orderBy: nestedOrderBy(sortBy, order),
+                skip,
+                take,
+            }),
+        ]);
+        return {
+            data,
+            limit,
+            total,
+            page,
+            last_page:
+                limit > 0 ? (limit > 0 ? Math.ceil(total / limit) : 1) : 1,
+        };
     }
 
-    return data;
-  }
+    async findOne(id: number): Promise<Book> {
+        const data = await this.findUnique(id);
+        if (!data) {
+            throw new NotFoundException(`Book with id ${id} not found`);
+        }
 
-  findUnique(id: number): Promise<Book | null> {
-    return this.prisma.book.findUnique({
-      where: { id },
-    });
-  }
+        return data;
+    }
 
-  async update(id: number, data: Prisma.BookUpdateInput) {
-    // will throw NotFoundException if not found
-    await this.findOne(id);
+    findUnique(id: number): Promise<Book | null> {
+        return this.prisma.book.findUnique({
+            where: { id },
+        });
+    }
 
-    return this.prisma.book.update({
-      where: { id },
-      data,
-    });
-  }
+    async update(id: number, data: Prisma.BookUpdateInput) {
+        // will throw NotFoundException if not found
+        await this.findOne(id);
 
-  async remove(id: number): Promise<void> {
-    // will throw NotFoundException if not found
-    await this.findOne(id);
+        return this.prisma.book.update({
+            where: { id },
+            data,
+        });
+    }
 
-    await this.prisma.book.delete({
-      where: { id },
-    });
+    async remove(id: number): Promise<void> {
+        // will throw NotFoundException if not found
+        await this.findOne(id);
 
-    return;
-  }
+        await this.prisma.book.delete({
+            where: { id },
+        });
+
+        return;
+    }
 }

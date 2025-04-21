@@ -5,11 +5,11 @@ import { ConfigModule } from '@nestjs/config';
 import { BooksModule } from './books/books.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot(),
-    BooksModule, // to load .env file
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+    imports: [
+        ConfigModule.forRoot(),
+        BooksModule, // to load .env file
+    ],
+    controllers: [AppController],
+    providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
