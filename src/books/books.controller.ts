@@ -8,6 +8,7 @@ import {
     Delete,
     Query,
     ValidationPipe,
+    ConflictException,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -17,6 +18,7 @@ import { PaginationQueryDto } from 'src/pagination-query.dto';
 import { Book } from './books.interface';
 import { Paginate } from 'src/app.interface';
 import { CreateBookDoc, DeleteBookDoc, GetAllBookDoc, GetBookDoc, UpdateBookDoc } from './books.doc';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @ApiTags('Books')
 @Controller({
@@ -28,8 +30,15 @@ export class BooksController {
 
     @CreateBookDoc()
     @Post()
-    create(@Body(new ValidationPipe({ transform: true })) createBookDto: CreateBookDto): Promise<Book> {
-        return this.booksService.create(createBookDto);
+    async create(@Body(new ValidationPipe({ transform: true })) createBookDto: CreateBookDto): Promise<Book> {
+        try {
+            return await this.booksService.create(createBookDto);
+        } catch (error) {
+            if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
+                throw new ConflictException('Book with this title already exists');
+            }
+            throw error;
+        }
     }
 
     @GetAllBookDoc()
@@ -48,11 +57,18 @@ export class BooksController {
 
     @UpdateBookDoc()
     @Patch(':id')
-    update(
+    async update(
         @Param('id') id: string,
         @Body(new ValidationPipe({ transform: true })) updateBookDto: UpdateBookDto
     ): Promise<Book> {
-        return this.booksService.update(+id, updateBookDto);
+        try {
+            return await this.booksService.update(+id, updateBookDto);
+        } catch (error) {
+            if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
+                throw new ConflictException('Book with this title already exists');
+            }
+            throw error;
+        }
     }
 
     @DeleteBookDoc()

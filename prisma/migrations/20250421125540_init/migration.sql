@@ -14,3 +14,9 @@ CREATE TABLE "books" (
 
     CONSTRAINT "books_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "books_title_key" ON "books"("title");
+
+-- CreateIndex
+CREATE INDEX "books_title_idx" ON "books"("title");

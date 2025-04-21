@@ -83,6 +83,21 @@ const BadRequest = ApiResponse({
     },
 });
 
+const Conflicts = ApiResponse({
+    status: 409,
+    description: 'Error: Conflict',
+    content: {
+        'application/json': {
+            example: {
+                message:
+                    'Book with this title already exists',
+                error: 'Conflict',
+                statusCode: 409,
+            },
+        },
+    },
+});
+
 export function CreateBookDoc() {
     return applyDecorators(
         ApiOperation({ summary: 'Create Book' }),
@@ -96,7 +111,8 @@ export function CreateBookDoc() {
                 example: sample1,
             },
         }),
-        BadRequest
+        BadRequest,
+        Conflicts
     );
 }
 
@@ -114,7 +130,8 @@ export function UpdateBookDoc() {
             },
         }),
         NotFound,
-        BadRequest
+        BadRequest,
+        Conflicts
     );
 }
 
