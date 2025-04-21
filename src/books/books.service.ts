@@ -1,12 +1,13 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Book } from './books.interface';
-import { Prisma } from '@prisma/client';
+import { Genre, Prisma } from '@prisma/client';
 import { PaginationQueryDto } from '../pagination-query.dto';
 import { Paginate } from '../app.interface';
 import { nestedOrderBy } from '../app.decorator';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { FilterBookQueryDto } from './dto/filter-book.dto';
 
 @Injectable()
 export class BooksService {
@@ -21,24 +22,25 @@ export class BooksService {
         });
     }
 
-    async findAll(pagination: PaginationQueryDto): Promise<Paginate<Book[]>> {
-        const cacheKey = `books:${JSON.stringify(pagination)}`;
+    async findAll(
+        filters: FilterBookQueryDto
+    ): Promise<Paginate<Book[]>> {
+        const cacheKey = `books:${JSON.stringify(filters)}`;
+
         const cached = await this.cacheManager.get<Paginate<Book[]>>(cacheKey);
 
         if (cached) return cached;
 
-        const { search, page, limit, sortBy, order } = pagination;
+        const { search, page, limit, sortBy, order, genre } = filters;
 
         /**
          * Case-insensitive search
          * Search condition for:
-         * - name
-         * - phone
-         * - address
-         * - identity_no
-         * - licence_no
+         * - title
+         * - author
+         * - publishedYear
          */
-        const where: Prisma.BookWhereInput = search
+        const searchCondition: Prisma.BookWhereInput = search
             ? {
                 OR: [
                     { title: { contains: search, mode: 'insensitive' } },
@@ -49,6 +51,12 @@ export class BooksService {
                 ],
             }
             : {};
+        const where: Prisma.BookWhereInput = {
+            AND: [
+                searchCondition,
+                { genres: genre ? { has: genre } : undefined },
+            ],
+        }
 
         const skip = (page - 1) * limit;
         const take = limit > 0 ? limit : undefined;

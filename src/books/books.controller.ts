@@ -14,11 +14,11 @@ import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { PaginationQueryDto } from '../pagination-query.dto';
 import { Book } from './books.interface';
 import { Paginate } from '../app.interface';
 import { CreateBookDoc, DeleteBookDoc, GetAllBookDoc, GetBookDoc, UpdateBookDoc } from './books.doc';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { FilterBookQueryDto } from './dto/filter-book.dto';
 
 @ApiTags('Books')
 @Controller({
@@ -44,9 +44,10 @@ export class BooksController {
     @GetAllBookDoc()
     @Get()
     findAll(
-        @Query(new ValidationPipe({ transform: true })) pagination: PaginationQueryDto,
+        @Query(new ValidationPipe({ transform: true })) filters: FilterBookQueryDto,
     ): Promise<Paginate<Book[]>> {
-        return this.booksService.findAll(pagination);
+        console.log('masuk controller')
+        return this.booksService.findAll(filters);
     }
 
     @GetBookDoc()
