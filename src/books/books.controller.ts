@@ -61,7 +61,6 @@ export class BooksController {
         @Query(new ValidationPipe({ transform: true }))
         filters: FilterBookQueryDto,
     ): Promise<Paginate<Book[]>> {
-        console.log('masuk controller');
         return this.booksService.findAll(filters);
     }
 
