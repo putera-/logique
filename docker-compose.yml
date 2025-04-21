@@ -6,7 +6,7 @@ services:
             context: .
             dockerfile: Dockerfile
         container_name: api_logique
-        image: api_logique:0.0.1-beta
+        image: api_logique:0.0.2-beta
         restart: always
         ports:
             - 5050:5000
