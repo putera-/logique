@@ -1,0 +1,50 @@
+# services / containers
+services:
+    # express app
+    api_logique:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: api_logique
+        image: api_logique:0.0.1-beta
+        restart: always
+        ports:
+            - 5050:5000
+            - 5075:5555
+        environment:
+            PORT: 5000
+            # for prisma
+            DATABASE_URL: postgresql://postgres_logique:abracadabra@logique_rizjamiputera:5432/mydb?schema=logique
+        volumes:
+            - volume_api_logique_rizjamiputera:/app/public
+        networks:
+            - network_logique_rizjamiputera
+        depends_on:
+            - logique_rizjamiputera
+
+    # postgre database
+    logique_rizjamiputera:
+        container_name: logique_rizjamiputera
+        image: postgres:latest
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_USER: postgres_logique
+            POSTGRES_PASSWORD: abracadabra
+            POSTGRES_DB: postgres
+        volumes:
+            - volume_postgre_logique_rizjamiputera:/var/lib/postgresql/data
+        networks:
+            - network_logique_rizjamiputera
+# volumes
+volumes:
+    volume_api_logique_rizjamiputera:
+        name: volume_api_logique_rizjamiputera
+    volume_postgre_logique_rizjamiputera:
+        name: volume_postgre_logique_rizjamiputera
+
+# networks
+networks:
+    network_logique_rizjamiputera:
+        name: network_logique_rizjamiputera
+        driver: bridge
