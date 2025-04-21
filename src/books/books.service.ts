@@ -1,6 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Book } from './books.interface';
+import { Prisma } from '@prisma/client';
 import { Paginate } from '../app.interface';
 import { nestedOrderBy } from '../app.decorator';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';

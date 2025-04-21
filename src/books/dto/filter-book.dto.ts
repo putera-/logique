@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Genre } from '@prisma/client';
 import { IsEnum, IsOptional } from 'class-validator';
-import { PaginationQueryDto } from 'src/pagination-query.dto';
+import { PaginationQueryDto } from '../../pagination-query.dto';
 
 export class FilterBookQueryDto extends PaginationQueryDto {
     @ApiPropertyOptional({

@@ -6,7 +6,7 @@ import { Genre } from '@prisma/client';
 import { ConflictException } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UpdateBookDto } from './dto/update-book.dto';
-import { Paginate } from 'src/app.interface';
+import { Paginate } from '../app.interface';
 import { Book } from './books.interface';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';

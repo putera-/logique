@@ -3,8 +3,8 @@ import { BooksService } from './books.service';
 import { PrismaService } from '../prisma.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Genre } from '@prisma/client';
-import { PaginationQueryDto } from 'src/pagination-query.dto';
 import { NotFoundException } from '@nestjs/common';
+import { FilterBookQueryDto } from './dto/filter-book.dto';
 
 describe('BooksService', () => {
     let service: BooksService;
@@ -74,12 +74,13 @@ describe('BooksService', () => {
 
     describe('findAll', () => {
         it('should return cached data if exists', async () => {
-            const pagination: PaginationQueryDto = {
+            const filter: FilterBookQueryDto = {
                 page: 1,
                 limit: 10,
                 search: '',
                 sortBy: 'id',
                 order: 'desc',
+                genre: null,
             };
 
             const cachedResult = {
@@ -92,7 +93,7 @@ describe('BooksService', () => {
 
             cacheManager.get.mockResolvedValue(cachedResult);
 
-            const result = await service.findAll(pagination);
+            const result = await service.findAll(filter);
             expect(result).toEqual(cachedResult);
             expect(cacheManager.get).toHaveBeenCalled();
             expect(prismaService.book.findMany).not.toHaveBeenCalled();
@@ -108,15 +109,16 @@ describe('BooksService', () => {
                 { id: 2, title: 'Book B' },
             ]);
 
-            const pagination: PaginationQueryDto = {
+            const filter: FilterBookQueryDto = {
                 page: 1,
                 limit: 2,
                 search: '',
                 sortBy: 'id',
                 order: 'asc',
+                genre: null,
             };
 
-            const result = await service.findAll(pagination);
+            const result = await service.findAll(filter);
 
             expect(result).toEqual({
                 data: [
@@ -130,7 +132,9 @@ describe('BooksService', () => {
             });
 
             expect(mockPrismaService.book.count).toHaveBeenCalledWith({
-                where: {},
+                where: {
+                    AND: [{}, { genres: undefined }],
+                },
             });
             expect(mockPrismaService.book.findMany).toHaveBeenCalled();
             expect(cacheManager.set).toHaveBeenCalled();
