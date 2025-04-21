@@ -1,11 +1,11 @@
 import { faker } from '@faker-js/faker';
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Genre, Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
     console.log(`Start seeding ...`);
-    const genres = ['Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'Horror', 'Mystery', 'Romance', 'Thriller', 'Western'];
+    const genres: Genre[] = ['Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'Horror', 'Mystery', 'Romance', 'Thriller', 'Western'];
 
     const books: Prisma.BookCreateManyInput[] = [];
     for (let i = 0; i < 110; i++) {
