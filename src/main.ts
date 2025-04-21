@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -28,6 +29,9 @@ async function bootstrap() {
             forbidNonWhitelisted: true,
         }),
     );
+
+    // SECURITY
+    app.use(helmet());
 
     // RUN APP
     const port = process.env.PORT ?? 5555;
