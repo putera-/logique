@@ -4,9 +4,13 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { BooksModule } from './books/books.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
     imports: [
+        CacheModule.register({
+            isGlobal: true
+        }),
         ThrottlerModule.forRoot({
             throttlers: [
                 {

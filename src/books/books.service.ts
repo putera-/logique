@@ -1,14 +1,19 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Book } from './books.interface';
 import { Prisma } from '@prisma/client';
 import { PaginationQueryDto } from 'src/pagination-query.dto';
 import { Paginate } from 'src/app.interface';
 import { nestedOrderBy } from 'src/app.decorator';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class BooksService {
-    constructor(private prisma: PrismaService) { }
+    constructor(
+        private prisma: PrismaService,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache
+    ) { }
 
     create(data: Prisma.BookCreateInput) {
         return this.prisma.book.create({
@@ -17,6 +22,11 @@ export class BooksService {
     }
 
     async findAll(pagination: PaginationQueryDto): Promise<Paginate<Book[]>> {
+        const cacheKey = `books:${JSON.stringify(pagination)}`;
+        const cached = await this.cacheManager.get<Paginate<Book[]>>(cacheKey);
+
+        if (cached) return cached;
+
         const { search, page, limit, sortBy, order } = pagination;
 
         /**
@@ -52,7 +62,7 @@ export class BooksService {
                 take,
             }),
         ]);
-        return {
+        const result = {
             data,
             limit,
             total,
@@ -60,21 +70,22 @@ export class BooksService {
             last_page:
                 limit > 0 ? (limit > 0 ? Math.ceil(total / limit) : 1) : 1,
         };
+
+        await this.cacheManager.set(cacheKey, result, 60 * 1000); // cache for 60 sec
+
+        return result
     }
 
     async findOne(id: number): Promise<Book> {
-        const data = await this.findUnique(id);
+        const data = await this.prisma.book.findUnique({
+            where: { id },
+        });
+
         if (!data) {
             throw new NotFoundException("Book is not found");
         }
 
         return data;
-    }
-
-    findUnique(id: number): Promise<Book | null> {
-        return this.prisma.book.findUnique({
-            where: { id },
-        });
     }
 
     async update(id: number, data: Prisma.BookUpdateInput) {
