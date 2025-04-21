@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
+import * as compression from 'compression';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -32,6 +33,9 @@ async function bootstrap() {
 
     // SECURITY
     app.use(helmet());
+
+    // COMPRESSION
+    app.use(compression());
 
     // RUN APP
     const port = process.env.PORT ?? 5555;
