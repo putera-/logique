@@ -1,8 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Book } from './books.interface';
-import { Genre, Prisma } from '@prisma/client';
-import { PaginationQueryDto } from '../pagination-query.dto';
 import { Paginate } from '../app.interface';
 import { nestedOrderBy } from '../app.decorator';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -14,7 +12,7 @@ export class BooksService {
     constructor(
         @Inject(CACHE_MANAGER) private cacheManager: Cache,
         private prisma: PrismaService,
-    ) { }
+    ) {}
 
     create(data: Prisma.BookCreateInput) {
         return this.prisma.book.create({
@@ -22,9 +20,7 @@ export class BooksService {
         });
     }
 
-    async findAll(
-        filters: FilterBookQueryDto
-    ): Promise<Paginate<Book[]>> {
+    async findAll(filters: FilterBookQueryDto): Promise<Paginate<Book[]>> {
         const cacheKey = `books:${JSON.stringify(filters)}`;
 
         const cached = await this.cacheManager.get<Paginate<Book[]>>(cacheKey);
@@ -42,21 +38,21 @@ export class BooksService {
          */
         const searchCondition: Prisma.BookWhereInput = search
             ? {
-                OR: [
-                    { title: { contains: search, mode: 'insensitive' } },
-                    { author: { contains: search, mode: 'insensitive' } },
-                    isNaN(Number(search)) // Ensure search is a number before applying to manufacturing_year
-                        ? {}
-                        : { publishedYear: { equals: Number(search) } },
-                ],
-            }
+                  OR: [
+                      { title: { contains: search, mode: 'insensitive' } },
+                      { author: { contains: search, mode: 'insensitive' } },
+                      isNaN(Number(search)) // Ensure search is a number before applying to manufacturing_year
+                          ? {}
+                          : { publishedYear: { equals: Number(search) } },
+                  ],
+              }
             : {};
         const where: Prisma.BookWhereInput = {
             AND: [
                 searchCondition,
                 { genres: genre ? { has: genre } : undefined },
             ],
-        }
+        };
 
         const skip = (page - 1) * limit;
         const take = limit > 0 ? limit : undefined;
@@ -82,7 +78,7 @@ export class BooksService {
 
         await this.cacheManager.set(cacheKey, result, 60 * 1000); // cache for 60 sec
 
-        return result
+        return result;
     }
 
     async findOne(id: number): Promise<Book> {
@@ -91,7 +87,7 @@ export class BooksService {
         });
 
         if (!data) {
-            throw new NotFoundException("Book is not found");
+            throw new NotFoundException('Book is not found');
         }
 
         return data;

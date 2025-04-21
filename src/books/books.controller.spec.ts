@@ -15,7 +15,6 @@ describe('BooksController', () => {
     let controller: BooksController;
     let booksService: BooksService;
 
-
     beforeEach(async () => {
         // Mock BooksService
         const mockBooksService = {
@@ -28,15 +27,16 @@ describe('BooksController', () => {
 
         const module: TestingModule = await Test.createTestingModule({
             controllers: [BooksController],
-            providers: [{
-                provide: BooksService,
-                useValue: mockBooksService
-            }],
+            providers: [
+                {
+                    provide: BooksService,
+                    useValue: mockBooksService,
+                },
+            ],
         }).compile();
 
         controller = module.get<BooksController>(BooksController);
         booksService = module.get<BooksService>(BooksService);
-
     });
 
     it('should be defined', () => {
@@ -83,12 +83,16 @@ describe('BooksController', () => {
                 {
                     code: 'P2002',
                     clientVersion: '4.16.2', // or whatever version your Prisma client is
-                }
+                },
             );
 
-            jest.spyOn(booksService, 'create').mockRejectedValueOnce(prismaError);
+            jest.spyOn(booksService, 'create').mockRejectedValueOnce(
+                prismaError,
+            );
 
-            await expect(controller.create(createBookDto)).rejects.toThrowError(ConflictException);
+            await expect(controller.create(createBookDto)).rejects.toThrowError(
+                ConflictException,
+            );
         });
     });
 
@@ -177,14 +181,19 @@ describe('BooksController', () => {
         it('should throw ConflictException on duplicate title', async () => {
             const updateBookDto: UpdateBookDto = { title: 'Existing Title' };
 
-            const prismaError = new PrismaClientKnownRequestError('Unique constraint', {
-                code: 'P2002',
-                clientVersion: '4.16.2',
-            });
+            const prismaError = new PrismaClientKnownRequestError(
+                'Unique constraint',
+                {
+                    code: 'P2002',
+                    clientVersion: '4.16.2',
+                },
+            );
 
             jest.spyOn(booksService, 'update').mockRejectedValue(prismaError);
 
-            await expect(controller.update('1', updateBookDto)).rejects.toThrow(ConflictException);
+            await expect(controller.update('1', updateBookDto)).rejects.toThrow(
+                ConflictException,
+            );
         });
     });
 
@@ -220,7 +229,11 @@ describe('BooksController', () => {
             const dto = plainToInstance(CreateBookDto, input);
             const errors = await validate(dto);
             expect(errors).toHaveLength(0);
-            expect(dto.genres).toEqual([Genre.Action, Genre.Comedy, Genre.Drama]);
+            expect(dto.genres).toEqual([
+                Genre.Action,
+                Genre.Comedy,
+                Genre.Drama,
+            ]);
         });
 
         it('rejects when genres is missing', async () => {
@@ -232,7 +245,10 @@ describe('BooksController', () => {
         });
 
         it('rejects when genres is null', async () => {
-            const dto = plainToInstance(CreateBookDto, { ...base, genres: null });
+            const dto = plainToInstance(CreateBookDto, {
+                ...base,
+                genres: null,
+            });
             const errors = await validate(dto);
             expect(errors).toHaveLength(1);
             expect(errors[0].property).toBe('genres');
@@ -247,11 +263,10 @@ describe('BooksController', () => {
             expect(errors[0].constraints).toHaveProperty('arrayNotEmpty');
         });
 
-
         it('rejects invalid enum values', async () => {
             const dto = plainToInstance(CreateBookDto, {
                 ...base,
-                genres: ['SciFi', 'Actions']
+                genres: ['SciFi', 'Actions'],
             });
             const errors = await validate(dto);
             // Should fail @IsEnum on the first invalid element
@@ -259,8 +274,9 @@ describe('BooksController', () => {
             expect(errors[0].property).toBe('genres');
             expect(errors[0].constraints).toHaveProperty('isEnum');
             // expect(errors[0].constraints).toHaveProperty('each');
-            expect(errors[0].constraints.isEnum).toMatch(/must be one of the following values/);
+            expect(errors[0].constraints.isEnum).toMatch(
+                /must be one of the following values/,
+            );
         });
     });
-
 });

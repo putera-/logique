@@ -1,7 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Genre } from '@prisma/client';
 import { Transform } from 'class-transformer';
-import { ArrayNotEmpty, IsArray, IsEnum, IsNumber, IsString, Max, Min, MinLength } from 'class-validator';
+import {
+    ArrayNotEmpty,
+    IsArray,
+    IsEnum,
+    IsNumber,
+    IsString,
+    Max,
+    Min,
+    MinLength,
+} from 'class-validator';
 
 export class CreateBookDto {
     @ApiProperty({ description: 'Book Title' })

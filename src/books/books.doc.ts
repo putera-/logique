@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 
@@ -23,27 +23,21 @@ const BadRequest = ApiResponse({
             examples: {
                 'Title is too short': {
                     value: {
-                        message: [
-                            'title must not be less than 3',
-                        ],
+                        message: ['title must not be less than 3'],
                         error: 'Bad Request',
                         statusCode: 400,
                     },
                 },
                 'Author is too short': {
                     value: {
-                        message: [
-                            'author must not be less than 3',
-                        ],
+                        message: ['author must not be less than 3'],
                         error: 'Bad Request',
                         statusCode: 400,
                     },
                 },
                 'publishedYear is less thank 1900': {
                     value: {
-                        message: [
-                            'publishedYear must not be less than 1900',
-                        ],
+                        message: ['publishedYear must not be less than 1900'],
                         error: 'Bad Request',
                         statusCode: 400,
                     },
@@ -51,7 +45,6 @@ const BadRequest = ApiResponse({
                 'publishedYear is more than 2200': {
                     value: {
                         message: [
-
                             'publipublishedYear must not be greater than 2200',
                         ],
                         error: 'Bad Request',
@@ -69,9 +62,7 @@ const BadRequest = ApiResponse({
                 },
                 'genres is empty': {
                     value: {
-                        message: [
-                            'At least one genre must be specified',
-                        ],
+                        message: ['At least one genre must be specified'],
                         error: 'Bad Request',
                         statusCode: 400,
                     },
@@ -98,8 +89,7 @@ const Conflicts = ApiResponse({
     content: {
         'application/json': {
             example: {
-                message:
-                    'Book with this title already exists',
+                message: 'Book with this title already exists',
                 error: 'Conflict',
                 statusCode: 409,
             },
@@ -121,7 +111,7 @@ export function CreateBookDoc() {
             },
         }),
         BadRequest,
-        Conflicts
+        Conflicts,
     );
 }
 
@@ -140,7 +130,7 @@ export function UpdateBookDoc() {
         }),
         NotFound,
         BadRequest,
-        Conflicts
+        Conflicts,
     );
 }
 
@@ -187,7 +177,7 @@ export function DeleteBookDoc() {
             description: 'Success',
             schema: {
                 example: {
-                    message: 'Book deleted successfully'
+                    message: 'Book deleted successfully',
                 },
             },
         }),
@@ -196,33 +186,30 @@ export function DeleteBookDoc() {
 
 const sample1 = {
     id: 3,
-    title: "Temporibus adeo corpus textus aptus.",
-    author: "Hubert Jacobson",
+    title: 'Temporibus adeo corpus textus aptus.',
+    author: 'Hubert Jacobson',
     publishedYear: 2024,
     stock: 60,
-    genres: [
-        "Drama",
-        "Romance"
-    ],
-    createdAt: "2025-04-21T11:21:35.456Z",
-    updatedAt: "2025-04-21T11:21:35.456Z"
+    genres: ['Drama', 'Romance'],
+    createdAt: '2025-04-21T11:21:35.456Z',
+    updatedAt: '2025-04-21T11:21:35.456Z',
 };
 const sample2 = {
     id: 4,
-    title: "Sto corpus defendo facere doloribus spectaculum esse defluo tardus.",
-    author: "Mike DuBuque",
+    title: 'Sto corpus defendo facere doloribus spectaculum esse defluo tardus.',
+    author: 'Mike DuBuque',
     publishedYear: 2024,
     stock: 75,
     genres: [
-        "Western",
-        "Comedy",
-        "Thriller",
-        "Romance",
-        "Action",
-        "Mystery",
-        "Drama",
-        "Horror"
+        'Western',
+        'Comedy',
+        'Thriller',
+        'Romance',
+        'Action',
+        'Mystery',
+        'Drama',
+        'Horror',
     ],
-    createdAt: "2025-04-21T11:21:35.456Z",
-    updatedAt: "2025-04-21T11:21:35.456Z"
+    createdAt: '2025-04-21T11:21:35.456Z',
+    updatedAt: '2025-04-21T11:21:35.456Z',
 };

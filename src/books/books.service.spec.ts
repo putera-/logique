@@ -22,12 +22,6 @@ describe('BooksService', () => {
         },
     };
 
-    const mockCacheManager = {
-        get: jest.fn(),
-        set: jest.fn(),
-        del: jest.fn(),
-    };
-
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
@@ -72,7 +66,9 @@ describe('BooksService', () => {
             mockPrismaService.book.create.mockResolvedValue(result);
 
             expect(await service.create(dto)).toEqual(result);
-            expect(mockPrismaService.book.create).toHaveBeenCalledWith({ data: dto });
+            expect(mockPrismaService.book.create).toHaveBeenCalledWith({
+                data: dto,
+            });
         });
     });
 
@@ -112,7 +108,6 @@ describe('BooksService', () => {
                 { id: 2, title: 'Book B' },
             ]);
 
-
             const pagination: PaginationQueryDto = {
                 page: 1,
                 limit: 2,
@@ -134,7 +129,9 @@ describe('BooksService', () => {
                 last_page: 1,
             });
 
-            expect(mockPrismaService.book.count).toHaveBeenCalledWith({ where: {} });
+            expect(mockPrismaService.book.count).toHaveBeenCalledWith({
+                where: {},
+            });
             expect(mockPrismaService.book.findMany).toHaveBeenCalled();
             expect(cacheManager.set).toHaveBeenCalled();
         });
@@ -152,7 +149,9 @@ describe('BooksService', () => {
         it('should throw NotFoundException if book not found', async () => {
             mockPrismaService.book.findUnique.mockResolvedValue(null);
 
-            await expect(service.findOne(999)).rejects.toThrow(NotFoundException);
+            await expect(service.findOne(999)).rejects.toThrow(
+                NotFoundException,
+            );
         });
     });
 
@@ -163,7 +162,10 @@ describe('BooksService', () => {
             const updateData = { title: 'Updated' };
 
             mockPrismaService.book.findUnique.mockResolvedValue(book);
-            mockPrismaService.book.update.mockResolvedValue({ id, ...updateData });
+            mockPrismaService.book.update.mockResolvedValue({
+                id,
+                ...updateData,
+            });
 
             const result = await service.update(id, updateData);
 
@@ -173,7 +175,9 @@ describe('BooksService', () => {
         it('should throw NotFoundException if book not found', async () => {
             mockPrismaService.book.findUnique.mockResolvedValue(null);
 
-            await expect(service.update(999, { title: 'X' })).rejects.toThrow(NotFoundException);
+            await expect(service.update(999, { title: 'X' })).rejects.toThrow(
+                NotFoundException,
+            );
         });
     });
 
@@ -191,8 +195,9 @@ describe('BooksService', () => {
         it('should throw NotFoundException if book not found', async () => {
             mockPrismaService.book.findUnique.mockResolvedValue(null);
 
-            await expect(service.remove(999)).rejects.toThrow(NotFoundException);
+            await expect(service.remove(999)).rejects.toThrow(
+                NotFoundException,
+            );
         });
     });
-
 });

@@ -26,5 +26,4 @@ describe('AppController', () => {
             expect(mockRes.redirect).toHaveBeenCalledWith('/api');
         });
     });
-
 });

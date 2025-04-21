@@ -8,7 +8,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 @Module({
     imports: [
         CacheModule.register({
-            isGlobal: true
+            isGlobal: true,
         }),
         ThrottlerModule.forRoot({
             throttlers: [
@@ -24,4 +24,4 @@ import { CacheModule } from '@nestjs/cache-manager';
     controllers: [AppController],
     providers: [],
 })
-export class AppModule { }
+export class AppModule {}
