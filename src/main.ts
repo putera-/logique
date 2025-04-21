@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
@@ -19,6 +19,15 @@ async function bootstrap() {
         .build();
     const documentFactory = () => SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, documentFactory);
+
+    // GLOBAL VALIDATION PIPE
+    app.useGlobalPipes(
+        new ValidationPipe({
+            transform: true,
+            whitelist: true, // strips properties not in DTO
+            forbidNonWhitelisted: true,
+        }),
+    );
 
     // RUN APP
     const port = process.env.PORT ?? 5555;
