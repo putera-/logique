@@ -8,7 +8,7 @@ import { nestedOrderBy } from 'src/app.decorator';
 
 @Injectable()
 export class BooksService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService) { }
 
     create(data: Prisma.BookCreateInput) {
         return this.prisma.book.create({
@@ -30,14 +30,14 @@ export class BooksService {
          */
         const where: Prisma.BookWhereInput = search
             ? {
-                  OR: [
-                      { title: { contains: search, mode: 'insensitive' } },
-                      { author: { contains: search, mode: 'insensitive' } },
-                      isNaN(Number(search)) // Ensure search is a number before applying to manufacturing_year
-                          ? {}
-                          : { publishedYear: { equals: Number(search) } },
-                  ],
-              }
+                OR: [
+                    { title: { contains: search, mode: 'insensitive' } },
+                    { author: { contains: search, mode: 'insensitive' } },
+                    isNaN(Number(search)) // Ensure search is a number before applying to manufacturing_year
+                        ? {}
+                        : { publishedYear: { equals: Number(search) } },
+                ],
+            }
             : {};
 
         const skip = (page - 1) * limit;
@@ -65,7 +65,7 @@ export class BooksService {
     async findOne(id: number): Promise<Book> {
         const data = await this.findUnique(id);
         if (!data) {
-            throw new NotFoundException(`Book with id ${id} not found`);
+            throw new NotFoundException("Book is not found");
         }
 
         return data;

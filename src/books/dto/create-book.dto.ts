@@ -1,15 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Genre } from '@prisma/client';
 import { Transform } from 'class-transformer';
-import { IsArray, IsEnum, IsNumber, IsString, Max, Min } from 'class-validator';
+import { IsArray, IsEnum, IsNumber, IsString, Max, Min, MinLength } from 'class-validator';
 
 export class CreateBookDto {
     @ApiProperty({ description: 'Book Title' })
     @IsString()
+    @MinLength(3)
     title: string;
 
     @ApiProperty({ description: 'Book Author' })
     @IsString()
+    @MinLength(3)
     author: string;
 
     @ApiProperty({ description: 'Published Year' })
@@ -24,20 +26,17 @@ export class CreateBookDto {
 
     @ApiProperty({
         description: 'List of genres',
-        enum: Genre, // Use enum here
-        enumName: 'Genre', // Optional: to provide a name for the enum in Swagger
+        enum: Genre,
+        isArray: true,
+        example: ['Action', 'Comedy'],
     })
-    @IsEnum(Genre)
     @Transform(({ value }) => {
-        // Ensure undefined or empty input results in an empty array
         if (!value) return [];
-
-        // Support both array and string input
         return Array.isArray(value)
             ? value
             : value.split(',').map((v: string) => v.trim());
     })
     @IsArray()
-    @IsString({ each: true })
+    @IsEnum(Genre, { each: true })
     genres: Genre[];
 }
