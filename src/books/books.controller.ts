@@ -14,9 +14,9 @@ import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { PaginationQueryDto } from 'src/pagination-query.dto';
+import { PaginationQueryDto } from '../pagination-query.dto';
 import { Book } from './books.interface';
-import { Paginate } from 'src/app.interface';
+import { Paginate } from '../app.interface';
 import { CreateBookDoc, DeleteBookDoc, GetAllBookDoc, GetBookDoc, UpdateBookDoc } from './books.doc';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Genre } from '@prisma/client';
 import { Transform } from 'class-transformer';
-import { IsArray, IsEnum, IsNumber, IsString, Max, Min, MinLength } from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsEnum, IsNumber, IsString, Max, Min, MinLength } from 'class-validator';
 
 export class CreateBookDto {
     @ApiProperty({ description: 'Book Title' })
@@ -37,6 +37,7 @@ export class CreateBookDto {
             : value.split(',').map((v: string) => v.trim());
     })
     @IsArray()
+    @ArrayNotEmpty({ message: 'At least one genre must be specified' })
     @IsEnum(Genre, { each: true })
     genres: Genre[];
 }

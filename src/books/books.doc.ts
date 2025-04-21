@@ -67,6 +67,15 @@ const BadRequest = ApiResponse({
                         statusCode: 400,
                     },
                 },
+                'genres is empty': {
+                    value: {
+                        message: [
+                            'At least one genre must be specified',
+                        ],
+                        error: 'Bad Request',
+                        statusCode: 400,
+                    },
+                },
                 'multiple errors': {
                     value: {
                         message: [

@@ -1,18 +1,18 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from '../prisma.service';
 import { Book } from './books.interface';
 import { Prisma } from '@prisma/client';
-import { PaginationQueryDto } from 'src/pagination-query.dto';
-import { Paginate } from 'src/app.interface';
-import { nestedOrderBy } from 'src/app.decorator';
+import { PaginationQueryDto } from '../pagination-query.dto';
+import { Paginate } from '../app.interface';
+import { nestedOrderBy } from '../app.decorator';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 
 @Injectable()
 export class BooksService {
     constructor(
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
         private prisma: PrismaService,
-        @Inject(CACHE_MANAGER) private cacheManager: Cache
     ) { }
 
     create(data: Prisma.BookCreateInput) {
@@ -62,6 +62,7 @@ export class BooksService {
                 take,
             }),
         ]);
+
         const result = {
             data,
             limit,
